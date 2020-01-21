@@ -2,6 +2,8 @@
 
 # Local Configuration
 For running this function locally you will need to add the following keys to a local.settings.json file in function app root
+
+```json
 {
   "Values": {
     "APPINSIGHTS_INSTRUMENTATIONKEY": "[APPLICATION INSIGHTS IKEY]",
@@ -10,6 +12,8 @@ For running this function locally you will need to add the following keys to a l
     "SERVICE_PRINCIPAL_TENANT_ID":"[SP TENANT ID FOR LOCAL DEBUGGING]"
   }
 }
+```
+
 
 # Local Debugging
 https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local
