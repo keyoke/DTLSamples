@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prestart": "npm run build && func extensions install --typescript",
+    "start:host": "func start",
+    "start": "npm run start:host & npm run watch",
+    "build:production": "npm run prestart && npm prune --production",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/arm-devtestlabs": "^3.2.0",
+    "@azure/ms-rest-azure-js": "^2.0.1",
+    "@azure/ms-rest-js": "^2.0.4",
+    "@azure/ms-rest-nodeauth": "^3.0.3"
+  },
+  "devDependencies": {
+    "@azure/functions": "^1.0.3",
+    "@types/node": "^13.1.2",
+    "typescript": "^3.3.3"
+  }
+}

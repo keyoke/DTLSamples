@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionName": {
+      "type": "string",
+      "defaultValue": "local-debug",
+      "metadata": {
+        "description": "The name of the event grid subscription to create."
+      }
+    },
+    "webhookUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The URL for the WebHook to receive events."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.EventGrid/eventSubscriptions",
+      "name": "[parameters('subscriptionName')]",
+      "apiVersion": "2019-06-01",
+      "properties": {
+        "destination": {
+          "endpointType": "WebHook",
+          "properties": {
+            "endpointUrl": "[parameters('webhookUrl')]"
+          }
+        },
+        "filter": {
+          "subjectBeginsWith": "",
+          "subjectEndsWith": "",
+          "isSubjectCaseSensitive": false,
+          "includedEventTypes": [ 
+            "Microsoft.Resources.ResourceActionSuccess",
+            "Microsoft.Resources.ResourceWriteSuccess"
+          ],
+          "advancedFilters": [
+            {
+              "key": "data.operationName",
+              "operatorType": "StringBeginsWith",
+              "values": [ 
+                "Microsoft.DevTestLab/labs/write",
+                "Microsoft.DevTestLab/labs/virtualmachines/write",
+                "Microsoft.DevTestLab/labs/virtualmachines/claim/action",
+                "Microsoft.DevTestLab/labs/virtualmachines/unclaim/action",
+                "Microsoft.DevTestLab/labs/virtualmachines/start/action"   
+              ]
+            },
+            {
+              "key": "subject",
+              "operatorType": "StringContains",
+              "values": [ 
+                "/providers/microsoft.devtestlab/labs/" 
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
