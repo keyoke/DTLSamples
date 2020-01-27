@@ -5,20 +5,24 @@ pool:
     vmImage: 'ubuntu-latest'
     
 steps:
-- bash: |
-    if [ -f extensions.csproj ]
-    then
-        dotnet build extensions.csproj --output ./bin
-    fi
-    npm install 
-    npm run build:production --if-present
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      if [ -f extensions.csproj ]
+      then
+          dotnet build extensions.csproj --output ./bin
+      fi
+      npm install 
+      npm run build:production --if-present
+    workingDirectory: '$(System.DefaultWorkingDirectory)/functions/DTLEventHandler'
 - task: ArchiveFiles@2
   displayName: "Archive files"
   inputs:
-    rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
+    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/functions/DTLEventHandler"
     includeRootFolder: false
-    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+    archiveFile: "$(System.DefaultWorkingDirectory)/functions/DTLEventHandler/build$(Build.BuildId).zip"
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/functions/DTLEventHandler/build$(Build.BuildId).zip'
     name: 'drop'
