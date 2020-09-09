@@ -7,26 +7,26 @@ export class DesktopVirtualization {
     constructor(client: msRestAzure.AzureServiceClient) {    
         this.client = client;
     }   
-    public async ApplyAppRole(tenantGroupName:string, tenantName: string, hostPoolName: string, roleName: string, appId: string) : Promise<boolean>
+    public async AddUserAppGroup(tenantGroupName:string, tenantName: string, hostPoolName: string, appGroupName: string, upn: string) : Promise<boolean>
     {
         // we will return the status
-        let isAppRoleAssigned : boolean = false;
+        let isAddUserAppGroup : boolean = false;
 
-        // https://docs.microsoft.com/en-us/rest/api/virtual-desktop/hostpool/assignapplicationrole
-        const reqAppRole: msRest.RequestPrepareOptions = {
-            url: `https://rdbroker.wvd.microsoft.com/RdsManagement/V1/TenantGroups/${tenantGroupName}/Tenants/${tenantName}/HostPools/${hostPoolName}/Rds.Authorization/roleAssignments/${roleName}/Users/appid/${appId}`,
-            method: "PUT"
+        // https://docs.microsoft.com/en-us/rest/api/virtual-desktop/appgroup/adduser
+        const reqAddUserAppGroup: msRest.RequestPrepareOptions = {
+            url: `https://rdbroker.wvd.microsoft.com/RdsManagement/V1/TenantGroups/${tenantGroupName}/Tenants/${tenantName}/HostPools/${hostPoolName}/AppGroups/${appGroupName}/AssignedUsers/${upn}`,
+            method: "POST"
           };
 
           // Send the request
-        const resAppRole = await this.client.sendLongRunningRequest(reqAppRole);
+        const resAddUserAppGroup = await this.client.sendLongRunningRequest(reqAddUserAppGroup);
 
-        if(resAppRole.status === 200)
+        if(resAddUserAppGroup.status === 200)
         {
-            isAppRoleAssigned = true;
+            isAddUserAppGroup = true;
         }
        
-        return isAppRoleAssigned;
+        return isAddUserAppGroup;
     }
     public async ApplyUserRole(tenantGroupName:string, tenantName: string, hostPoolName: string, roleName: string, upn: string) : Promise<boolean>
     {

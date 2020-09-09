@@ -11,7 +11,7 @@ const clientOptions: msRestAzure.AzureServiceClientOptions = { };
 const tenantGroupName = process.env["TENANT_GROUP_NAME"];
 const tenantName = process.env["TENANT_NAME"];
 const hostPoolName = process.env["HOST_POOL_NAME"];
-const roleName = process.env["ROLE_NAME"];
+const appGroupName = process.env["APP_GROUP"];
 
 // When we get here we have already filtered only the events we are interested in
 const handleEvent: AzureFunction = async function (context: Context, eventGridEvent: any): Promise<void> {
@@ -38,10 +38,13 @@ const handleEvent: AzureFunction = async function (context: Context, eventGridEv
         const claimer = eventGridEvent.data.claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"];
         context.log(`VM '${vm}' claimed by '${claimer}' for DTL Lab '${lab}'.`);
 
-        // Example of Applying a DTL VM Artifact
-        if(await desktopVirtualization.ApplyUserRole(tenantGroupName, tenantName, hostPoolName, roleName, claimer))
+        // Example of performing user direct assignment for the WVD session host
+        if(await desktopVirtualization.AddUserAppGroup(tenantGroupName, tenantName, hostPoolName, appGroupName, claimer))
         {
-            context.log('Artifacts Successfully Applied!');
+            /* if(await desktopVirtualization.ApplyUserRole(tenantGroupName, tenantName, hostPoolName, roleName, claimer))
+            {
+                context.log('Session host direct assingment successfully applied!');
+            } */
         }
     }
 
