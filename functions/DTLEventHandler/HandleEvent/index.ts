@@ -8,10 +8,10 @@ import { DesktopVirtualization } from '../SharedCode/DesktopVirtualization';
 const auth = new AppAuthentication();
 const clientOptions: msRestAzure.AzureServiceClientOptions = { };
 // WVD Details
-const tenantGroupName = process.env["TENANT_GROUP_NAME"];
-const tenantName = process.env["TENANT_NAME"];
+const subscriptionId = process.env["SUBSCRIPTION_ID"];
+const resourceGroupName = process.env["RESOURCE_GROUP_NAME"];
 const hostPoolName = process.env["HOST_POOL_NAME"];
-const appGroupName = process.env["APP_GROUP"];
+const sessionHostName = process.env["SESSION_HOST_NAME"];
 
 // When we get here we have already filtered only the events we are interested in
 const handleEvent: AzureFunction = async function (context: Context, eventGridEvent: any): Promise<void> {
@@ -39,12 +39,9 @@ const handleEvent: AzureFunction = async function (context: Context, eventGridEv
         context.log(`VM '${vm}' claimed by '${claimer}' for DTL Lab '${lab}'.`);
 
         // Example of performing user direct assignment for the WVD session host
-        if(await desktopVirtualization.AddUserAppGroup(tenantGroupName, tenantName, hostPoolName, appGroupName, claimer))
+        if(await desktopVirtualization.AssignUser(subscriptionId, resourceGroupName, hostPoolName, sessionHostName, claimer))
         {
-            /* if(await desktopVirtualization.ApplyUserRole(tenantGroupName, tenantName, hostPoolName, roleName, claimer))
-            {
-                context.log('Session host direct assingment successfully applied!');
-            } */
+
         }
     }
 

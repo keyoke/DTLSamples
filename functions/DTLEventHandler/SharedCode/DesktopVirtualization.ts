@@ -7,42 +7,26 @@ export class DesktopVirtualization {
     constructor(client: msRestAzure.AzureServiceClient) {    
         this.client = client;
     }   
-    public async AddUserAppGroup(tenantGroupName:string, tenantName: string, hostPoolName: string, appGroupName: string, upn: string) : Promise<boolean>
-    {
-        // we will return the status
-        let isAddUserAppGroup : boolean = false;
-
-        // https://docs.microsoft.com/en-us/rest/api/virtual-desktop/appgroup/adduser
-        const reqAddUserAppGroup: msRest.RequestPrepareOptions = {
-            url: `https://rdbroker.wvd.microsoft.com/RdsManagement/V1/TenantGroups/${tenantGroupName}/Tenants/${tenantName}/HostPools/${hostPoolName}/AppGroups/${appGroupName}/AssignedUsers/${upn}`,
-            method: "POST"
-          };
-
-          // Send the request
-        const resAddUserAppGroup = await this.client.sendLongRunningRequest(reqAddUserAppGroup);
-
-        if(resAddUserAppGroup.status === 200)
-        {
-            isAddUserAppGroup = true;
-        }
-       
-        return isAddUserAppGroup;
-    }
-    public async ApplyUserRole(tenantGroupName:string, tenantName: string, hostPoolName: string, roleName: string, upn: string) : Promise<boolean>
+    public async AssignUser(subscriptionId:string, resourceGroupName: string, hostPoolName: string, sessionHostName: string, upn: string) : Promise<boolean>
     {
         // we will return the status
         let isUserAssigned : boolean = false;
 
-        // https://docs.microsoft.com/en-us/rest/api/virtual-desktop/hostpool/assignuserrole
-        const reqUserRole: msRest.RequestPrepareOptions = {
-            url: `https://rdbroker.wvd.microsoft.com/RdsManagement/V1/TenantGroups/${tenantGroupName}/Tenants/${tenantName}/HostPools/${hostPoolName}/Rds.Authorization/roleAssignments/${roleName}/Users/upn/${upn}`,
-            method: "PUT"
+        // https://docs.microsoft.com/en-Us/rest/api/desktopvirtualization/sessionhosts/update
+        const reqAssignUser: msRest.RequestPrepareOptions = {
+            url: `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.DesktopVirtualization/hostPools/${hostPoolName}/sessionHosts/${sessionHostName}?api-version=2019-12-10-preview`,
+            method: "PATCH",
+            body: {
+                properties: {
+                    assignedUser : `${upn}`
+                }
+            }
           };
 
         // Send the request
-        const resUserRole = await this.client.sendLongRunningRequest(reqUserRole);
+        const resAssignUser = await this.client.sendLongRunningRequest(reqAssignUser);
 
-        if(resUserRole.status === 200)
+        if(resAssignUser.status === 200)
         {
             isUserAssigned = true;
         }
