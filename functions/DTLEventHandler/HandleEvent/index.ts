@@ -11,7 +11,6 @@ const clientOptions: msRestAzure.AzureServiceClientOptions = { };
 const subscriptionId = process.env["SUBSCRIPTION_ID"];
 const resourceGroupName = process.env["RESOURCE_GROUP_NAME"];
 const hostPoolName = process.env["HOST_POOL_NAME"];
-const sessionHostName = process.env["SESSION_HOST_NAME"];
 
 // When we get here we have already filtered only the events we are interested in
 const handleEvent: AzureFunction = async function (context: Context, eventGridEvent: any): Promise<void> {
@@ -39,7 +38,7 @@ const handleEvent: AzureFunction = async function (context: Context, eventGridEv
         context.log(`VM '${vm}' claimed by '${claimer}' for DTL Lab '${lab}'.`);
 
         // Example of performing user direct assignment for the WVD session host
-        if(await desktopVirtualization.AssignUser(subscriptionId, resourceGroupName, hostPoolName, sessionHostName, claimer))
+        if(await desktopVirtualization.AssignUser(subscriptionId, resourceGroupName, hostPoolName, vm, claimer))
         {
 
         }
